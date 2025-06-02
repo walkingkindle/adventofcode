@@ -29,32 +29,22 @@
 
         private static int CheckSafeReports(List<List<int>> lists)
         {
-            int isSafeCount = 0;
-            foreach (var report in lists)
-            {
-                if (CheckForSafeReportsInternal(report))
-                {
-                    isSafeCount++;
-                }
-                else
-                {
-                    for(int i = 0; i < report.Count; i++)
-                    {
-                        report.RemoveAt(i);
-                        if (CheckForSafeReportsInternal(report))
-                        {
-                            isSafeCount++;
-                        }
-                    }
-                }
-            }
-            return isSafeCount;
+            return lists.Count(report => CheckForSafeReportsInternal(report) || TryCheckForSafeReportsDampener(report));
         }
 
-        //I think I am onto something here. I might need recursion for this?
-
-        //This is part 2.
-
+        private static bool TryCheckForSafeReportsDampener(List<int> report)
+        {
+            for (int i = 0; i < report.Count; i++)
+            {
+                List<int> reportCopy = new List<int>(report);
+                reportCopy.RemoveAt(i);
+                if (CheckForSafeReportsInternal(reportCopy))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         private static bool CheckForSafeReportsInternal(List<int> report)
         {
