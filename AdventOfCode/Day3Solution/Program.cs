@@ -10,14 +10,15 @@ namespace Day3Solution
     {
         static void Main(string[] args)
         {
-            List<List<string>> problem = GetInputValues();
+            string problem = GetInputValues();
 
-            var multiplyList = Format(problem);
+            //var multiplyList = Format(problem);
+            //string formattedInput = Format(problem);
 
             //var multiPlyListFormatedMembers = FormatMembers(multiplyList);
-            var skipDonts = SkipDonts(multiplyList);
+            //var skipDonts = SkipDonts(multiplyList);
 
-            int result = Concactenate(multiplyList);
+            int result = Concactenate(problem);
 
         }
 
@@ -40,71 +41,75 @@ namespace Day3Solution
             return result;
         }
 
-        private static int Concactenate(List<string> formattedMembers)
+        private static int Concactenate(string input)
         {
             int result = 0;
-            var pattern = @"mul\((\d+),(\d+)\)";
-            foreach (var member in formattedMembers)
-            {
-                var matches = Regex.Matches(member, pattern);
-                foreach (Match match in matches)
-                {
-                    int x = int.Parse(match.Groups[1].Value);
-                    int y = int.Parse(match.Groups[2].Value);
+            bool enabled = true;
 
+            var pattern = @"(do\(\)|don't\(\)|mul\(\d+,\d+\))";
+            var matches = Regex.Matches(input, pattern);
+
+            foreach (Match match in matches)
+            {
+                string token = match.Value;
+
+                if (token == "don't()")
+                {
+                    enabled = false;
+                }
+                else if (token == "do()")
+                {
+                    enabled = true;
+                }
+                else if (token.StartsWith("mul(") && enabled)
+                {
+                    var parts = token.Substring(4, token.Length - 5).Split(',');
+                    int x = int.Parse(parts[0]);
+                    int y = int.Parse(parts[1]);
                     result += x * y;
                 }
             }
+
             return result;
         }
 
-        //private static List<string> FormatMembers(List<string> multiplyList)
-        //{
-        //    List<string> formattedMembers = new();
-        //    foreach(var member in multiplyList)
-        //    {
-        //      var formattedmember = member.Substring(member.IndexOf("m"));
-        //        formattedMembers.Add(formattedmember);
-        //    }
 
-        //    return formattedMembers;
-
-        //}
-
-        private static List<string> Format(List<List<string>> problem)
+        private static string Format(string input)
         {
-            List<string> multiplyList = new List<string>();
-            List<string> dontsList = new List<string>();
-            
-
-            foreach(var list in problem)
+            var stringToReplace = new List<string>() { "what()", "who()", "why()", "what()", "when()" };
+            foreach (var member in stringToReplace)
             {
-                foreach(var member in list)
-                {
-                    if (member.Contains("don't()mul"))
-                    {
-                        dontsList.Add(member);
-                    }
-
-                    if (member.Contains("mul"))
-                    {
-                        multiplyList.Add(member);
-                    }
-                }
+                input.Replace(member, "");
             }
-            return multiplyList;
+
+            return input;
+
         }
 
-        private static List<List<string>> GetInputValues()
+        //private static List<string> Format(List<List<string>> problem)
+        //{
+        //    List<string> multiplyList = new List<string>();
+        //    foreach(var list in problem)
+        //    {
+        //        foreach(var member in list)
+        //        {
+        //            if (member.Contains("mul"))
+        //            {
+        //                multiplyList.Add(member);
+        //            }
+        //        }
+        //    }
+        //    return multiplyList;
+        //}
+
+        private static string GetInputValues()
         {
             string fileName = "input.txt";
 
             List<List<string>> splitLines = new();
-            foreach (var lines in File.ReadAllLines(fileName))
-            {
-                splitLines.Add(lines.Split("()").ToList());
-            }
-            return splitLines;
+
+            string input = File.ReadAllText("input.txt");
+            return input;
         }
     }
 }
