@@ -6,39 +6,39 @@ namespace Day5Solution
     {
         static async Task Main(string[] args)
         {
-            string pairsInput = @"
-            47|53
-            97|13
-            97|61
-            97|47
-            75|29
-            61|13
-            75|53
-            29|13
-            97|29
-            53|29
-            61|53
-            97|53
-            61|29
-            47|13
-            75|47
-            97|75
-            47|61
-            75|61
-            47|29
-            75|13";
-            var tupleList = RetrieveInput(pairsInput);
+            //string pairsInput = @"
+            //47|53
+            //97|13
+            //97|61
+            //97|47
+            //75|29
+            //61|13
+            //75|53
+            //29|13
+            //97|29
+            //53|29
+            //61|53
+            //97|53
+            //61|29
+            //47|13
+            //75|47
+            //97|75
+            //47|61
+            //75|61
+            //47|29
+            //75|13";
+            //var tupleList = RetrieveInput(pairsInput);
 
-            var strInputList = @"75,47,61,53,29
-            97,61,53,29,13
-            75,29,13
-            75,97,47,61,53
-            61,13,29
-            97,13,75,29,47";
+            //var strInputList = @"75,47,61,53,29
+            //97,61,53,29,13
+            //75,29,13
+            //75,97,47,61,53
+            //61,13,29
+            //97,13,75,29,47";
 
-            var orderedList = GetOrderedLists(strInputList);
+            //var orderedList = GetOrderedLists(strInputList);
 
-            var midCount = CheckForCount(orderedList, tupleList);
+            var midCount = CheckForCount(GetListsFromInput(), GetTupleListFromText());
 
             var count = CountMiddles(midCount);
         }
@@ -167,11 +167,38 @@ namespace Day5Solution
             return result;
         }
 
-        private static string ParseRawInputFromText()
+        private static List<Tuple<int,int>> GetTupleListFromText()
         {
             string fileName = "input1.txt";
 
+            List<Tuple<int, int>> listOfTuples = new();
 
+            foreach (var line in File.ReadAllLines(fileName))
+            {
+                List<int> tupleElement = line.Split("|").Select(x => int.Parse(x)).ToList();
+
+                Tuple<int, int> tuple = new Tuple<int, int>(tupleElement[0], tupleElement[1]);
+
+                listOfTuples.Add(tuple);
+            }
+
+            return listOfTuples;
+        }
+
+        private static List<List<int>> GetListsFromInput()
+        {
+            string fileName = "input2.txt";
+
+            List<List<int>> lineList = new();
+
+            foreach (var line in File.ReadAllLines(fileName))
+            {
+                List<int> lines = line.Trim().Split(",").Select(x => int.Parse(x)).ToList();
+
+                lineList.Add(lines);
+            }
+
+            return lineList;
         }
     }
 }
